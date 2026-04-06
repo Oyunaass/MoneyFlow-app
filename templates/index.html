@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MoneyFlow</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-page: #f5f7fb;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: #cbd5e1;
+            --border-dark: #94a3b8;
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+            --primary: #5b8c5a;
+            --primary-light: #e8f0e8;
+            --primary-dark: #4a7349;
+            --danger: #e57373;
+            --danger-light: #ffebee;
+            --success: #81c784;
+            --success-light: #e8f5e9;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 20px;
+        }
+
+        body.dark {
+            --bg-page: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border: #475569;
+            --border-dark: #5a6a85;
+            --input-bg: #0f172a;
+            --input-border: #334155;
+            --primary: #7da06e;
+            --primary-light: #2a3527;
+            --primary-dark: #9bbf8c;
+            --danger: #f87171;
+            --danger-light: #3a2a2a;
+            --success: #4ade80;
+            --success-light: #1a3a2a;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--bg-page);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            min-height: 100vh;
+        }
+
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: var(--bg-page);
+        }
+
+        .auth-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            width: 100%;
+            max-width: 440px;
+            border: 2px solid var(--border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .auth-card h1 {
+            font-size: 28px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .auth-card .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: var(--radius);
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(91, 140, 90, 0.1);
+        }
+
+        .password-wrapper input {
+            padding-right: 48px;
+        }
+
+        .eye-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 6px;
+            color: var(--text-muted);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .app-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px 28px;
+            margin-bottom: 28px;
+            border: 2px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar-wrapper {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .avatar {
+            width: 52px;
+            height: 52px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .balance-card {
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            padding: 12px 28px;
+            text-align: center;
+            border: 2px solid var(--primary);
+        }
+
+        .balance-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .balance-amount {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .logout-btn:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+            background: var(--danger-light);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            background: var(--bg-card);
+            padding: 6px;
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--border);
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .tab-btn.active {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border: 1px solid var(--primary);
+        }
+
+        .tab-btn:hover:not(.active) {
+            border: 1px solid var(--border);
+            background: var(--bg-page);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            border: 2px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: 600;
+        }
+
+        .stat-value.income {
+            color: var(--success);
+        }
+
+        .stat-value.expense {
+            color: var(--danger);
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 2px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .btn-add {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border: 1px solid var(--primary);
+            padding: 8px 20px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .btn-add:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-sm {
+            background: transparent;
+            border: 1px solid var(--border);
+            padding: 4px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .btn-sm:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-category {
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .transaction-date {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .transaction-amount.income {
+            color: var(--success);
+        }
+
+        .transaction-amount.expense {
+            color: var(--danger);
+        }
+
+        .btn-delete {
+            background: transparent;
+            border: 1px solid var(--danger);
+            padding: 4px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 11px;
+            color: var(--danger);
+        }
+
+        .btn-delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .goal-item {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--bg-page);
+            border-radius: var(--radius);
+            border: 2px solid var(--border);
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .goal-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .goal-amount {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 4px;
+        }
+
+        .goal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .goal-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 24px;
+            border: 2px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+
+        .pie-chart-container {
+            max-width: 260px;
+            margin: 0 auto;
+        }
+
+        canvas {
+            max-height: 240px;
+        }
+
+        .avatar-selector {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .avatar-option {
+            width: 52px;
+            height: 52px;
+            background: var(--bg-page);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            border: 2px solid var(--border);
+        }
+
+        .avatar-option:hover, .avatar-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 480px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 2px solid var(--border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 2px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--text-muted);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 40px;
+            padding: 10px 18px;
+            cursor: pointer;
+            font-size: 13px;
+            z-index: 100;
+            color: var(--text-secondary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .app-container { padding: 16px; }
+            .header { flex-direction: column; text-align: center; }
+            .charts-row { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        let currentUser = null;
+        let currentTheme = localStorage.getItem('theme') || 'light';
+        let currentTab = 'dashboard';
+        let pieChart = null;
+
+        const emojis = ['👤', '🌿', '🐱', '🌸', '🍃', '⭐', '🎯', '📖', '☕', '🌙', '✨', '🕊️'];
+
+        function setTheme(theme) {
+            if (theme === 'dark') document.body.classList.add('dark');
+            else document.body.classList.remove('dark');
+            localStorage.setItem('theme', theme);
+            currentTheme = theme;
+            if (currentTab === 'dashboard') setTimeout(renderPieChart, 100);
+        }
+
+        function toggleTheme() {
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        }
+
+        setTheme(currentTheme);
+
+        function formatDate(dateStr) {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' });
+        }
+
+        function formatMoney(amount) {
+            return new Intl.NumberFormat('ru-RU').format(Math.round(amount));
+        }
+
+        async function apiRequest(url, method, data) {
+            const options = { method, headers: { 'Content-Type': 'application/json' } };
+            if (data) options.body = JSON.stringify(data);
+            const response = await fetch(url, options);
+            return response.json();
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const result = await apiRequest('/api/login', 'POST', { email, password });
+            if (result.success) {
+                currentUser = result.user;
+                renderMainApp();
+            } else {
+                alert(result.error);
+            }
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            const email = document.getElementById('regEmail').value;
+            const name = document.getElementById('regName').value;
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirmPassword').value;
+            
+            if (password !== confirm) { alert('Пароли не совпадают'); return; }
+            if (password.length < 8) { alert('Пароль минимум 8 символов'); return; }
+            
+            const result = await apiRequest('/api/register', 'POST', { email, name, password });
+            if (result.success) {
+                currentUser = result.user;
+                renderMainApp();
+            } else {
+                alert(result.error);
+            }
+        }
+
+        async function logout() {
+            await apiRequest('/api/logout', 'POST');
+            currentUser = null;
+            renderLoginPage();
+        }
+
+        async function addTransaction(amount, type, category, date) {
+            const result = await apiRequest('/api/transactions', 'POST', { amount, type, category, date });
+            if (result.success) {
+                currentUser.balance = result.balance;
+                currentUser.transactions.unshift(result.transaction);
+                renderCurrentPage();
+            }
+        }
+
+        async function deleteTransaction(id, amount, type) {
+            const result = await apiRequest(`/api/transactions/${id}`, 'DELETE');
+            if (result.success) {
+                currentUser.balance = result.balance;
+                currentUser.transactions = currentUser.transactions.filter(t => t.id !== id);
+                renderCurrentPage();
+            }
+        }
+
+        async function addGoal(name, target, current) {
+            const result = await apiRequest('/api/goals', 'POST', { name, target, current });
+            if (result.success) {
+                currentUser.goals.push(result.goal);
+                renderCurrentPage();
+            }
+        }
+
+        async function updateGoal(id, name, target, current) {
+            await apiRequest(`/api/goals/${id}`, 'PUT', { name, target, current });
+            const goal = currentUser.goals.find(g => g.id === id);
+            if (goal) {
+                goal.name = name;
+                goal.target = target;
+                goal.current = current;
+            }
+            renderCurrentPage();
+        }
+
+        async function addToGoal(id, amount) {
+            const result = await apiRequest(`/api/goals/${id}/add`, 'POST', { amount });
+            if (result.success) {
+                currentUser.balance = result.balance;
+                const goal = currentUser.goals.find(g => g.id === id);
+                if (goal) {
+                    goal.current = result.goal.current;
+                }
+                if (result.transaction) {
+                    currentUser.transactions.unshift(result.transaction);
+                }
+                renderCurrentPage();
+                alert(`✅ Добавлено ${formatMoney(amount)} ₽ к цели!`);
+            } else {
+                alert(result.error);
+            }
+        }
+
+        async function deleteGoal(id) {
+            await apiRequest(`/api/goals/${id}`, 'DELETE');
+            currentUser.goals = currentUser.goals.filter(g => g.id !== id);
+            renderCurrentPage();
+        }
+
+        async function updateAvatar(avatar) {
+            const result = await apiRequest('/api/avatar', 'POST', { avatar });
+            if (result.success) {
+                currentUser.avatar = result.avatar;
+                renderCurrentPage();
+            }
+        }
+
+        async function uploadAvatar(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+            const response = await fetch('/api/avatar', { method: 'POST', body: formData });
+            const result = await response.json();
+            if (result.success) {
+                currentUser.avatar = result.avatar;
+                renderCurrentPage();
+            }
+        }
+
+        function openAddTransaction() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header"><h3>Новая операция</h3><button onclick="this.closest('.modal-overlay').remove()" style="font-size:22px;cursor:pointer;">×</button></div>
+                    <div class="modal-body">
+                        <div class="form-group"><label>Тип</label><select id="transactionType"><option value="expense">Расход</option><option value="income">Доход</option></select></div>
+                        <div class="form-group"><label>Сумма</label><input type="number" id="transactionAmount" placeholder="0"></div>
+                        <div class="form-group"><label>Категория</label><select id="transactionCategory"><option>Продукты</option><option>Транспорт</option><option>Жилье</option><option>Здоровье</option><option>Одежда</option><option>Развлечения</option><option>Зарплата</option><option>Подарки</option><option>Другое</option></select></div>
+                        <div class="form-group"><label>Дата</label><input type="datetime-local" id="transactionDate" value="${new Date().toISOString().slice(0,16)}"></div>
+                    </div>
+                    <div class="modal-footer"><button class="btn-secondary" onclick="this.closest('.modal-overlay').remove()">Отмена</button><button class="btn-primary" onclick="saveTransaction(this)">Сохранить</button></div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function saveTransaction(btn) {
+            const modal = btn.closest('.modal-overlay');
+            const type = modal.querySelector('#transactionType').value;
+            const amount = parseFloat(modal.querySelector('#transactionAmount').value);
+            const category = modal.querySelector('#transactionCategory').value;
+            const date = modal.querySelector('#transactionDate').value;
+            if (!amount || amount <= 0) { alert('Введите сумму'); return; }
+            addTransaction(amount, type, category, date);
+            modal.remove();
+        }
+
+        function openAddGoal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header"><h3>Новая цель</h3><button onclick="this.closest('.modal-overlay').remove()" style="font-size:22px;cursor:pointer;">×</button></div>
+                    <div class="modal-body">
+                        <div class="form-group"><label>Название</label><input type="text" id="goalName" placeholder="Например: Накопить на путешествие"></div>
+                        <div class="form-group"><label>Целевая сумма</label><input type="number" id="goalTarget" placeholder="0"></div>
+                        <div class="form-group"><label>Уже накоплено</label><input type="number" id="goalCurrent" placeholder="0" value="0"></div>
+                    </div>
+                    <div class="modal-footer"><button class="btn-secondary" onclick="this.closest('.modal-overlay').remove()">Отмена</button><button class="btn-primary" onclick="saveGoal(this)">Сохранить</button></div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function saveGoal(btn) {
+            const modal = btn.closest('.modal-overlay');
+            const name = modal.querySelector('#goalName').value;
+            const target = parseFloat(modal.querySelector('#goalTarget').value);
+            const current = parseFloat(modal.querySelector('#goalCurrent').value);
+            if (!name || !target) { alert('Заполните название и сумму'); return; }
+            addGoal(name, target, current);
+            modal.remove();
+        }
+
+        function openEditGoal(goal) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header"><h3>Редактировать цель</h3><button onclick="this.closest('.modal-overlay').remove()" style="font-size:22px;cursor:pointer;">×</button></div>
+                    <div class="modal-body">
+                        <div class="form-group"><label>Название</label><input type="text" id="editGoalName" value="${goal.name}"></div>
+                        <div class="form-group"><label>Целевая сумма</label><input type="number" id="editGoalTarget" value="${goal.target}"></div>
+                        <div class="form-group"><label>Накоплено</label><input type="number" id="editGoalCurrent" value="${goal.current}"></div>
+                    </div>
+                    <div class="modal-footer"><button class="btn-secondary" onclick="this.closest('.modal-overlay').remove()">Отмена</button><button class="btn-primary" onclick="saveEditGoal(${goal.id}, this)">Сохранить</button></div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function saveEditGoal(id, btn) {
+            const modal = btn.closest('.modal-overlay');
+            const name = modal.querySelector('#editGoalName').value;
+            const target = parseFloat(modal.querySelector('#editGoalTarget').value);
+            const current = parseFloat(modal.querySelector('#editGoalCurrent').value);
+            if (!name || !target) { alert('Заполните поля'); return; }
+            updateGoal(id, name, target, current);
+            modal.remove();
+        }
+
+        function openAddToGoal(goal) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header"><h3>Добавить к цели "${goal.name}"</h3><button onclick="this.closest('.modal-overlay').remove()" style="font-size:22px;cursor:pointer;">×</button></div>
+                    <div class="modal-body">
+                        <div class="form-group"><label>Сумма</label><input type="number" id="addAmount" placeholder="Сколько добавить?"></div>
+                    </div>
+                    <div class="modal-footer"><button class="btn-secondary" onclick="this.closest('.modal-overlay').remove()">Отмена</button><button class="btn-primary" onclick="saveAddToGoal(${goal.id}, this)">Добавить</button></div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function saveAddToGoal(id, btn) {
+            const modal = btn.closest('.modal-overlay');
+            const amount = parseFloat(modal.querySelector('#addAmount').value);
+            if (!amount || amount <= 0) { alert('Введите сумму'); return; }
+            addToGoal(id, amount);
+            modal.remove();
+        }
+
+        function openAvatarModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header"><h3>Выберите аватар</h3><button onclick="this.closest('.modal-overlay').remove()" style="font-size:22px;cursor:pointer;">×</button></div>
+                    <div class="modal-body">
+                        <div style="margin-bottom: 20px;">
+                            <label>Загрузить фото</label>
+                            <input type="file" id="avatarUpload" accept="image/*" style="margin-top: 8px;">
+                        </div>
+                        <div style="margin-bottom: 16px;"><strong>Или выберите эмодзи:</strong></div>
+                        <div class="avatar-selector">
+                            ${emojis.map(e => `<div class="avatar-option ${currentUser.avatar === e ? 'selected' : ''}" onclick="selectEmoji('${e}', this.closest('.modal-overlay'))">${e}</div>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            document.getElementById('avatarUpload').onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    uploadAvatar(file);
+                    modal.remove();
+                }
+            };
+        }
+
+        function selectEmoji(emoji, modal) {
+            updateAvatar(emoji);
+            modal.remove();
+        }
+
+        function renderPieChart() {
+            const canvas = document.getElementById('pieChart');
+            if (!canvas) return;
+            const expenses = currentUser.transactions.filter(t => t.type === 'expense');
+            if (expenses.length === 0) return;
+            const categoryData = {};
+            expenses.forEach(t => { categoryData[t.category] = (categoryData[t.category] || 0) + t.amount; });
+            if (pieChart) pieChart.destroy();
+            const ctx = canvas.getContext('2d');
+            pieChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: Object.keys(categoryData), datasets: [{ data: Object.values(categoryData), backgroundColor: ['#7c9a6e', '#d4b87a', '#c97e7e', '#8b9a8b', '#b8a9a9'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: true, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+            });
+        }
+
+        function renderDashboard() {
+            const totalIncome = currentUser.transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+            const totalExpense = currentUser.transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+            const recentTransactions = [...currentUser.transactions].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 4);
+            setTimeout(() => renderPieChart(), 100);
+            return `
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-label">Баланс</div><div class="stat-value">${formatMoney(currentUser.balance)} ₽</div></div>
+                    <div class="stat-card"><div class="stat-icon">📈</div><div class="stat-label">Доходы</div><div class="stat-value income">+${formatMoney(totalIncome)} ₽</div></div>
+                    <div class="stat-card"><div class="stat-icon">📉</div><div class="stat-label">Расходы</div><div class="stat-value expense">-${formatMoney(totalExpense)} ₽</div></div>
+                </div>
+                <div class="charts-row">
+                    <div class="chart-card"><div class="chart-title">Структура расходов</div><div class="pie-chart-container">${currentUser.transactions.filter(t => t.type === 'expense').length === 0 ? '<div class="empty-state">Нет данных</div>' : '<canvas id="pieChart"></canvas>'}</div></div>
+                    <div class="card"><div class="card-header"><div class="card-title">Последние операции</div><button class="btn-add" onclick="openAddTransaction()">+ Добавить</button></div>
+                        ${recentTransactions.length === 0 ? '<div class="empty-state">Нет операций</div>' : recentTransactions.map(t => `<div class="transaction-item"><div><div class="transaction-category">${t.category}</div><div class="transaction-date">${formatDate(t.date)}</div></div><div class="transaction-amount ${t.type}">${t.type === 'income' ? '+' : '-'} ${formatMoney(t.amount)} ₽</div></div>`).join('')}
+                    </div>
+                </div>
+                <div class="card"><div class="card-header"><div class="card-title">Финансовые цели</div><button class="btn-add" onclick="openAddGoal()">+ Добавить</button></div>
+                    ${currentUser.goals.length === 0 ? '<div class="empty-state">Нет целей</div>' : currentUser.goals.map(goal => { const percent = (goal.current / goal.target) * 100; return `<div class="goal-item"><div class="goal-header"><span class="goal-name">${goal.name}</span><span class="goal-amount">${formatMoney(goal.current)} / ${formatMoney(goal.target)} ₽</span></div><div class="progress-bar"><div class="progress-fill" style="width: ${Math.min(percent, 100)}%"></div></div><div class="goal-footer"><span>${Math.floor(percent)}% выполнено, осталось ${formatMoney(goal.target - goal.current)} ₽</span><div class="goal-actions"><button class="btn-sm" onclick="openAddToGoal(${JSON.stringify(goal).replace(/"/g, '&quot;')})">+ Добавить</button><button class="btn-sm" onclick="openEditGoal(${JSON.stringify(goal).replace(/"/g, '&quot;')})">✎ Изменить</button><button class="btn-sm" onclick="deleteGoal(${goal.id})">🗑 Удалить</button></div></div></div>`; }).join('')}
+                </div>
+            `;
+        }
+
+        function renderTransactions() {
+            const transactions = [...currentUser.transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+            return `<div class="card"><div class="card-header"><div class="card-title">Все операции</div><button class="btn-add" onclick="openAddTransaction()">+ Добавить</button></div>${transactions.length === 0 ? '<div class="empty-state">Нет операций</div>' : transactions.map(t => `<div class="transaction-item"><div><div class="transaction-category">${t.category}</div><div class="transaction-date">${new Date(t.date).toLocaleDateString('ru-RU')}</div></div><div style="display:flex;gap:16px;align-items:center;"><div class="transaction-amount ${t.type}">${t.type === 'income' ? '+' : '-'} ${formatMoney(t.amount)} ₽</div><button class="btn-delete" onclick="deleteTransaction(${t.id}, ${t.amount}, '${t.type}')">Удалить</button></div></div>`).join('')}</div>`;
+        }
+
+        function renderGoals() {
+            return `<div class="card"><div class="card-header"><div class="card-title">Мои цели</div><button class="btn-add" onclick="openAddGoal()">+ Добавить</button></div>${currentUser.goals.length === 0 ? '<div class="empty-state">Нет целей</div>' : currentUser.goals.map(goal => { const percent = (goal.current / goal.target) * 100; return `<div class="goal-item"><div class="goal-header"><span class="goal-name">${goal.name}</span><span class="goal-amount">${formatMoney(goal.current)} / ${formatMoney(goal.target)} ₽</span></div><div class="progress-bar"><div class="progress-fill" style="width: ${Math.min(percent, 100)}%"></div></div><div class="goal-footer"><span>${Math.floor(percent)}% выполнено, осталось ${formatMoney(goal.target - goal.current)} ₽</span><div class="goal-actions"><button class="btn-sm" onclick="openAddToGoal(${JSON.stringify(goal).replace(/"/g, '&quot;')})">+ Добавить</button><button class="btn-sm" onclick="openEditGoal(${JSON.stringify(goal).replace(/"/g, '&quot;')})">✎ Изменить</button><button class="btn-sm" onclick="deleteGoal(${goal.id})">🗑 Удалить</button></div></div></div>`; }).join('')}</div>`;
+        }
+
+        function renderSettings() {
+            const avatarHtml = currentUser.avatar && currentUser.avatar.startsWith('/uploads') 
+                ? `<img src="${currentUser.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` 
+                : `<span style="font-size:32px;">${currentUser.avatar || '👤'}</span>`;
+            return `<div class="card"><div class="card-header"><div class="card-title">Настройки</div></div>
+                <div style="margin-bottom:32px;"><h3 style="margin-bottom:16px;">Аватар</h3><div style="display:flex;align-items:center;gap:20px;"><div class="avatar" style="width:64px;height:64px;display:flex;align-items:center;justify-content:center;overflow:hidden;">${avatarHtml}</div><button class="btn-add" onclick="openAvatarModal()">Изменить</button></div></div>
+                <div style="margin-bottom:32px;"><h3 style="margin-bottom:16px;">Оформление</h3><div style="display:flex;gap:12px;"><button class="btn-add ${currentTheme === 'light' ? 'active' : ''}" style="${currentTheme === 'light' ? 'background:var(--primary);color:white;' : ''}" onclick="setTheme('light'); renderSettings()">Светлая</button><button class="btn-add ${currentTheme === 'dark' ? 'active' : ''}" style="${currentTheme === 'dark' ? 'background:var(--primary);color:white;' : ''}" onclick="setTheme('dark'); renderSettings()">Тёмная</button></div></div>
+                <div style="margin-bottom:32px;"><h3 style="margin-bottom:16px;">Профиль</h3><div><span style="color:var(--text-muted);">Имя:</span> ${currentUser.name}</div><div><span style="color:var(--text-muted);">Email:</span> ${currentUser.email}</div><div><span style="color:var(--text-muted);">Баланс:</span> ${formatMoney(currentUser.balance)} ₽</div><div><span style="color:var(--text-muted);">Операций:</span> ${currentUser.transactions.length}</div><div><span style="color:var(--text-muted);">Целей:</span> ${currentUser.goals.length}</div></div>
+                <div><h3 style="margin-bottom:16px;">О приложении</h3><div>MoneyFlow — личный финансовый помощник</div><div>© 2026</div></div></div>`;
+        }
+
+        function renderCurrentPage() {
+            const app = document.getElementById('app');
+            let content = '';
+            if (currentTab === 'dashboard') content = renderDashboard();
+            else if (currentTab === 'transactions') content = renderTransactions();
+            else if (currentTab === 'goals') content = renderGoals();
+            else if (currentTab === 'settings') content = renderSettings();
+            
+            app.innerHTML = `<button class="theme-toggle" onclick="toggleTheme()">${currentTheme === 'light' ? '🌙' : '☀️'}</button><div class="app-container"><div class="header"><div class="user-info"><div class="avatar-wrapper" onclick="openAvatarModal()"><div class="avatar">${currentUser.avatar && currentUser.avatar.startsWith('/uploads') ? `<img src="${currentUser.avatar}">` : `<span>${currentUser.avatar || '👤'}</span>`}</div></div><div><div class="user-name">${currentUser.name}</div><div class="user-email">${currentUser.email}</div></div></div><div class="balance-card"><div class="balance-label">Баланс</div><div class="balance-amount">${formatMoney(currentUser.balance)} ₽</div></div><button class="logout-btn" onclick="logout()">Выйти</button></div><div class="nav-tabs"><button class="tab-btn ${currentTab === 'dashboard' ? 'active' : ''}" onclick="setTab('dashboard')">Обзор</button><button class="tab-btn ${currentTab === 'transactions' ? 'active' : ''}" onclick="setTab('transactions')">Операции</button><button class="tab-btn ${currentTab === 'goals' ? 'active' : ''}" onclick="setTab('goals')">Цели</button><button class="tab-btn ${currentTab === 'settings' ? 'active' : ''}" onclick="setTab('settings')">Настройки</button></div>${content}</div>`;
+            if (currentTab === 'dashboard') setTimeout(renderPieChart, 100);
+        }
+
+        function setTab(tab) { currentTab = tab; renderCurrentPage(); }
+        function renderMainApp() { currentTab = 'dashboard'; renderCurrentPage(); }
+
+        function renderLoginPage() {
+            document.getElementById('app').innerHTML = `<div class="auth-container"><div class="auth-card"><h1>MoneyFlow</h1><div class="subtitle">личный финансовый помощник</div><form id="loginForm" onsubmit="handleLogin(event)"><div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="your@email.com" required></div><div class="form-group"><label>Пароль</label><div class="password-wrapper"><input type="password" id="loginPassword" placeholder="••••••••" required><button type="button" class="eye-btn" id="loginEyeBtn" onmousedown="document.getElementById('loginPassword').type='text';this.textContent='🙈'" onmouseup="document.getElementById('loginPassword').type='password';this.textContent='👁️'" onmouseleave="document.getElementById('loginPassword').type='password';this.textContent='👁️'">👁️</button></div></div><button type="submit" class="btn-primary">Войти</button><div class="auth-footer">Нет аккаунта? <a onclick="renderRegisterPage()">Зарегистрироваться</a></div></form></div></div>`;
+        }
+
+        function renderRegisterPage() {
+            document.getElementById('app').innerHTML = `<div class="auth-container"><div class="auth-card"><h1>Регистрация</h1><div class="subtitle">создайте аккаунт</div><form id="registerForm" onsubmit="handleRegister(event)"><div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="your@email.com" required></div><div class="form-group"><label>Имя</label><input type="text" id="regName" placeholder="Ваше имя" required></div><div class="form-group"><label>Пароль</label><div class="password-wrapper"><input type="password" id="regPassword" placeholder="минимум 8 символов" required><button type="button" class="eye-btn" id="regEyeBtn" onmousedown="document.getElementById('regPassword').type='text';this.textContent='🙈'" onmouseup="document.getElementById('regPassword').type='password';this.textContent='👁️'" onmouseleave="document.getElementById('regPassword').type='password';this.textContent='👁️'">👁️</button></div></div><div class="form-group"><label>Подтвердите пароль</label><div class="password-wrapper"><input type="password" id="regConfirmPassword" placeholder="••••••••" required><button type="button" class="eye-btn" id="regConfirmEyeBtn" onmousedown="document.getElementById('regConfirmPassword').type='text';this.textContent='🙈'" onmouseup="document.getElementById('regConfirmPassword').type='password';this.textContent='👁️'" onmouseleave="document.getElementById('regConfirmPassword').type='password';this.textContent='👁️'">👁️</button></div></div><button type="submit" class="btn-primary">Зарегистрироваться</button><div class="auth-footer">Уже есть аккаунт? <a onclick="renderLoginPage()">Войти</a></div></form></div></div>`;
+        }
+
+        window.handleLogin = handleLogin;
+        window.handleRegister = handleRegister;
+        window.logout = logout;
+        window.setTab = setTab;
+        window.openAddTransaction = openAddTransaction;
+        window.openAddGoal = openAddGoal;
+        window.openEditGoal = openEditGoal;
+        window.openAddToGoal = openAddToGoal;
+        window.deleteTransaction = deleteTransaction;
+        window.deleteGoal = deleteGoal;
+        window.setTheme = setTheme;
+        window.renderSettings = renderSettings;
+        window.openAvatarModal = openAvatarModal;
+        window.selectEmoji = selectEmoji;
+        window.saveTransaction = saveTransaction;
+        window.saveGoal = saveGoal;
+        window.saveEditGoal = saveEditGoal;
+        window.saveAddToGoal = saveAddToGoal;
+
+        renderLoginPage();
+    </script>
+</body>
+</html>
