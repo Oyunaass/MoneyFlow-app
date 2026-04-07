@@ -229,6 +229,7 @@
             font-size: 26px;
             border: 2px solid var(--primary);
             object-fit: cover;
+            overflow: hidden;
         }
 
         .avatar img {
@@ -812,11 +813,23 @@
         async function uploadAvatar(file) {
             const formData = new FormData();
             formData.append('image', file);
-            const response = await fetch('/api/avatar', { method: 'POST', body: formData });
-            const result = await response.json();
-            if (result.success) {
-                currentUser.avatar = result.avatar;
-                renderCurrentPage();
+            
+            try {
+                const response = await fetch('/api/avatar', { 
+                    method: 'POST', 
+                    body: formData 
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentUser.avatar = result.avatar;
+                    renderCurrentPage();
+                    alert('Аватар успешно обновлен!');
+                } else {
+                    alert('Ошибка: ' + (result.error || 'Не удалось загрузить'));
+                }
+            } catch (error) {
+                alert('Ошибка загрузки: ' + error.message);
             }
         }
 
@@ -1060,6 +1073,7 @@
         window.saveGoal = saveGoal;
         window.saveEditGoal = saveEditGoal;
         window.saveAddToGoal = saveAddToGoal;
+        window.uploadAvatar = uploadAvatar;
 
         renderLoginPage();
     </script>
